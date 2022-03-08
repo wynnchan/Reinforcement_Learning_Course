@@ -1,2 +1,2 @@
 # Reinforcement_Learning_Course
-MAFS6000
+MAFS6010Y

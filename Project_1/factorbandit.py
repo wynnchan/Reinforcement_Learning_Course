@@ -140,53 +140,51 @@ ret_index.index = pd.to_datetime(ret_index.index)
 reward.index = pd.to_datetime(reward.index)
 plt.figure(figsize=(20,10))
 sns.lineplot(data=(reward.join(ret_index)+1).cumprod())
-plt.savefig(cwd+'figures/'+'factors.jpg')
+plt.savefig(cwd+'/figures/'+'factors.jpg')
+
+k=10
+# idx=[]
 
 step_range = [0.05, 0.1, 0.15, 0.2, 0.3, 0.4, 0.5]
 simulation = 100
-step_mean = []
-step_std = []
-step_mean_UCB = []
-step_std_UCB = []
-for step in step_range:
-    i = 0
-    temp = []
-    temp2 = []
-    while i < 100:
-        i = i+1
-        temp.append((np.array(train(9, reward*100, 0.01, stepsize=step)['return'])/100+1).prod())
-        temp2.append((np.array(train(9, reward*100, 0.01, stepsize=step, UCB_param=2)['return'])/100+1).prod())
-    step_mean.append(np.array(temp).mean())
-    step_std.append(np.array(temp).std())
-    step_mean_UCB.append(np.array(temp2).mean())
-    step_std_UCB.append(np.array(temp2).std())
+
 
 epsilon_range = [0.01, 0.02, 0.03, 0.04, 0.05, 0.1, 0.15]
-simulation = 100
-eps_mean = []
-eps_std = []
-eps_mean_UCB = []
-eps_std_UCB = []
-for epsilon in epsilon_range:
-    i = 0
-    temp = []
-    temp2 = []
-    while i < 100:
-        i = i+1
-        temp.append((np.array(train(10, reward*100, epsilon, 0.05)['return'])/100+1).prod())
-        temp2.append((np.array(train(10, reward*100, epsilon, 0.05, UCB_param=2)['return'])/100+1).prod())
-    eps_mean.append(np.array(temp).mean())
-    eps_std.append(np.array(temp).std())
-    eps_mean_UCB.append(np.array(temp2).mean())
-    eps_std_UCB.append(np.array(temp2).std())
 
-#@ the best parameters are stepsize = 0.05, eps = 0.04, UCB_param = None
+test_mean = []
+test_std = []
+test_mean_UCB = []
+test_std_UCB = []
+s=[]
+e=[]
+
+for step in step_range:
+    for epsilon in epsilon_range:
+        i = 0
+        temp = []
+        temp2 = []
+        while i < 100:
+            i = i+1
+            
+            temp.append((np.array(train(k, reward*100, epsilon, step)['return'])/100+1).prod())
+            temp2.append((np.array(train(k, reward*100, epsilon, step, UCB_param=2)['return'])/100+1).prod())
+        # lb="step = "+str(step)+", "+"epi = "+str(epsilon)
+        # idx.append(lb)
+        s.append(step)
+        e.append(epsilon)
+        test_mean.append(np.array(temp).mean())
+        test_std.append(np.array(temp).std())
+        test_mean_UCB.append(np.array(temp2).mean())
+        test_std_UCB.append(np.array(temp2).std())
+        
+
+#@ the best parameters are stepsize = 0.05, eps = 0.05, UCB_param = None
 #@ draw figures of the same bandit
 result = {}
 actions = {}
 i = 0
 while i < 10:
-    temp = train(10, reward*100, 0.04, 0.05)
+    temp = train(10, reward*100, 0.05, 0.05)
     result[i] = pd.Series(temp['return'])/100
     actions[i] = pd.Series(temp['actions'])
     i = i+1

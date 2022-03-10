@@ -88,6 +88,7 @@ class Bandit:
             self.q_esti[action] += self.stepsize * (reward - self.q_esti[action])
         return reward
 
+# cwd = '/Users/chenwynn/Documents/courses_21spring/reinforcement learning/Reinforcement_Learning_Course/Project_1'
 cwd = os.getcwd()
 pwd = cwd+'/factors/'
 
@@ -196,7 +197,7 @@ sns.lineplot(data=(result+1).cumprod())
 plt.savefig(cwd+'/figures/'+'returns.jpg')
 
 plt.figure(figsize=(20,10))
-sns.histplot(data = actions)
+sns.histplot(data = actions.unstack().reset_index(), x = 'level_0', hue = 0, multiple = 'stack')
 plt.savefig(cwd+'/figures/'+'actions.jpg')
 
 

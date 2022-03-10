@@ -123,7 +123,7 @@ def train(karm, reward, eps, stepsize, UCB_param=None, grad=False, grad_baseline
     # @reward: pandas.dataframe
     res = []
     actions = []
-    test = Bandit(karm, eps, stepsize, UCB_param=None, grad=False, grad_baseline=False)
+    test = Bandit(karm, epi = eps, initial = 0, stepsize = stepsize, UCB_param=None, grad=False, grad_baseline=False)
     test.reset()
     for t in range(len(reward)):
         action = test.act()
@@ -141,7 +141,7 @@ ret_index.index = pd.to_datetime(ret_index.index)
 reward.index = pd.to_datetime(reward.index)
 plt.figure(figsize=(20,10))
 sns.lineplot(data=(reward.join(ret_index)+1).cumprod())
-plt.savefig(cwd+'/figures/'+'factors.jpg')
+plt.savefig(cwd+'/factors_figures/'+'factors.jpg')
 
 k=10
 # idx=[]
@@ -179,13 +179,13 @@ for step in step_range:
         test_std_UCB.append(np.array(temp2).std())
         
 
-#@ the best parameters are stepsize = 0.05, eps = 0.05, UCB_param = None
+#@ the best parameters are stepsize = 0.3, eps = 0.02, UCB_param = 2
 #@ draw figures of the same bandit
 result = {}
 actions = {}
 i = 0
 while i < 10:
-    temp = train(10, reward*100, 0.05, 0.05)
+    temp = train(10, reward*100, 0.3, 0.02)
     result[i] = pd.Series(temp['return'])/100
     actions[i] = pd.Series(temp['actions'])
     i = i+1
@@ -194,11 +194,11 @@ actions = pd.DataFrame(actions)
 
 plt.figure(figsize=(20,10))
 sns.lineplot(data=(result+1).cumprod())
-plt.savefig(cwd+'/figures/'+'returns.jpg')
+plt.savefig(cwd+'/factors_figures/'+'returns.jpg')
 
 plt.figure(figsize=(20,10))
 sns.histplot(data = actions.unstack().reset_index(), x = 'level_0', hue = 0, multiple = 'stack')
-plt.savefig(cwd+'/figures/'+'actions.jpg')
+plt.savefig(cwd+'/factors_figures/'+'actions.jpg')
 
 
 
